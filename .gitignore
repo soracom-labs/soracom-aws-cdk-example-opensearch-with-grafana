@@ -1,0 +1,6 @@
+.LAST_BUILD
+*.snk
+*.js
+*.d.ts
+*.swp
+node_modules/

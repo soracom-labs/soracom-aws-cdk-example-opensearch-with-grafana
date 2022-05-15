@@ -1,0 +1,16 @@
+{
+  "name": "opensearch-with-grafana-lambdas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "funk.ts",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.10.0",
+    "@types/elasticsearch": "^5.0.40",
+    "dayjs": "^1.11.1"
+  }
+}
