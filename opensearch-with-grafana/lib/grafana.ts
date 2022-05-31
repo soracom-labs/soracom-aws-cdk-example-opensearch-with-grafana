@@ -1,12 +1,12 @@
-import { aws_cloudfront, aws_cloudfront_origins, aws_ec2, aws_ecs, aws_ecs_patterns, aws_rds, CfnOutput, Duration, SecretValue } from "aws-cdk-lib";
+import { aws_cloudfront, aws_cloudfront_origins, aws_ec2, aws_ecs, aws_ecs_patterns, aws_iam, aws_rds, CfnOutput, Duration } from "aws-cdk-lib";
 import { CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 import { Vpc } from "aws-cdk-lib/aws-ec2";
 import { Construct } from "constructs";
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export interface GrafanaClusterProps {
   vpc: Vpc,
-  cloudFrontPrefixListId: string,
-  rdsMasterPassword: string
+  cloudFrontPrefixListId: string
 }
 
 export class GrafanaCluster extends Construct {
@@ -48,10 +48,18 @@ export class GrafanaCluster extends Construct {
       aws_ec2.Port.tcp(3306)
     );
 
+    const rdsPasswordSecret = new secretsmanager.Secret(this, 'rdsSecret',{
+      generateSecretString: {
+        excludeCharacters:'/@"',
+        excludePunctuation:true,
+        includeSpace:false,
+        passwordLength:12
+      }
+    });
+
     //Aurora
     const dbUser = 'admin';
-    const dbPassword = new SecretValue(props.rdsMasterPassword);
-    const rdsCredential = aws_rds.Credentials.fromPassword(dbUser, dbPassword);
+    const rdsCredential = aws_rds.Credentials.fromPassword(dbUser, rdsPasswordSecret.secretValue);
     const aurora = new aws_rds.ServerlessCluster(this, 'aurora', {
       engine: aws_rds.DatabaseClusterEngine.AURORA_MYSQL,
       vpc:props.vpc,
@@ -74,16 +82,27 @@ export class GrafanaCluster extends Construct {
       image,
       logging,
       environment: {
-        GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS:'alexandra-trackmap-panel',
         GF_DATABASE_TYPE:'mysql',
         GF_DATABASE_HOST:aurora.clusterEndpoint.hostname,
         GF_DATABASE_USER:rdsCredential.username,
-        GF_DATABASE_PASSWORD:props.rdsMasterPassword
+      },
+      secrets:{
+        "GF_DATABASE_PASSWORD":aws_ecs.Secret.fromSecretsManager(rdsPasswordSecret)
       }
     }).addPortMappings({
       containerPort:3000,
       hostPort:3000
     });
+
+    serviceTaskDefinition.taskRole.attachInlinePolicy(new aws_iam.Policy(this, 'ecs_task_iam_policy', {
+      statements: [new aws_iam.PolicyStatement({
+        actions: [
+          "secretsmanager:GetSecretValue",
+          "kms:Decrypt"
+        ],
+        resources: ['*'],
+      })],
+    }));
 
     const fargateService = new aws_ecs_patterns.ApplicationLoadBalancedFargateService(this, "FargateService", {
       cluster,
