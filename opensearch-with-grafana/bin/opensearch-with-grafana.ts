@@ -4,18 +4,18 @@ import * as cdk from 'aws-cdk-lib';
 import { OpensearchWithGrafanaStack } from '../lib/opensearch-with-grafana-stack';
 
 const app = new cdk.App();
-new OpensearchWithGrafanaStack(app, 'OpensearchWithGrafanaStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const cloudfrontPrefixListId = app.node.tryGetContext('cloudFrontPrefixListId');
+if(!cloudfrontPrefixListId) {
+  throw new Error('You have to provide CloudFront Prefix List Id as cdk deploy -c cloudFrontPrefixListId=CLOUDFRONT_PREFIX_LIST_ID');
+};
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const ec2KeyPairName = app.node.tryGetContext('ec2KeyPairName');
+if(!ec2KeyPairName) {
+  throw new Error('You have to provide ec2 key pair name for bastion host as cdk deploy -c ec2KeyPairName=EC2_KEY_PAIR_NAME');
+};
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+new OpensearchWithGrafanaStack(app, 'OpensearchWithGrafanaStack',{
+  cloudfrontPrefixListId,
+  ec2KeyPairName
 });
