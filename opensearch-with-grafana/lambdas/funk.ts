@@ -6,11 +6,11 @@ const client = new Client({
   node: osDomainEndpoint
 });
 
-
 export class BasicDataRecord {
   imsi: string;
   payload: {[key:string]:string|number};
   tags:{[key:string]:string|number};
+  serverTimestamp:string;
 
   constructor(
       customContext: {[key:string]:string|number},
@@ -18,13 +18,8 @@ export class BasicDataRecord {
   ) {
       this.imsi = customContext.imsi as string;
       this.payload = payload;
-  }
+      this.serverTimestamp = new Date().toISOString();
 
-  flatten(): {[key:string]:string|any} {
-      return {
-        imsi: this.imsi,
-        payload: this.payload
-      }
   }
 }
 
