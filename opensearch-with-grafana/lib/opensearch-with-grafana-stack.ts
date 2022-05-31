@@ -5,8 +5,7 @@ import { BastionHost, BastionHostProps } from './bastion';
 import { GrafanaCluster, GrafanaClusterProps } from './grafana';
 import { OpensearchCluster, OpensearchClusterProps } from './opensearch';
 
-export interface OpensearchWithGrafanaStackProps 
-extends StackProps {
+export interface OpensearchWithGrafanaStackProps extends StackProps {
   cloudfrontPrefixListId: string;
   ec2KeyPairName: string;
 }
@@ -17,29 +16,25 @@ export class OpensearchWithGrafanaStack extends Stack {
 
     const vpc = new aws_ec2.Vpc(this, `${id}/Vpc`, {
       cidr: '10.0.0.0/16',
-      maxAzs: 3
+      maxAzs: 3,
     });
 
-    const grafanaCluster = new GrafanaCluster(this,`${id}/Grafana`,{
+    const grafanaCluster = new GrafanaCluster(this, `${id}/Grafana`, {
       vpc,
-      cloudFrontPrefixListId: props.cloudfrontPrefixListId
+      cloudFrontPrefixListId: props.cloudfrontPrefixListId,
     });
 
-    const bastionHost = new BastionHost(this,`${id}/Bastion`,{
+    const bastionHost = new BastionHost(this, `${id}/Bastion`, {
       vpc,
-      keyPairName:props.ec2KeyPairName
+      keyPairName: props.ec2KeyPairName,
     });
-    new CfnOutput(this, "Checkpoint instance-id", {
+    new CfnOutput(this, 'Checkpoint instance-id', {
       value: bastionHost.checkpointInstanceId,
     });
 
-    new OpensearchCluster(this,`${id}/Opensearch`,{
+    new OpensearchCluster(this, `${id}/Opensearch`, {
       vpc,
-      peerSecurityGroups: [
-        grafanaCluster.serviceSecurityGroup,
-        bastionHost.bastionHostSecurityGroup
-      ]
+      peerSecurityGroups: [grafanaCluster.serviceSecurityGroup, bastionHost.bastionHostSecurityGroup],
     });
-
   }
 }
