@@ -1,3 +1,6 @@
+*.ts
+!*.d.ts
 
-.LAST_BUILD
-*.snk
+# CDK asset staging directory
+.cdk.staging
+cdk.out

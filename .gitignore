@@ -1,6 +1,8 @@
-.LAST_BUILD
-*.snk
 *.js
+!jest.config.js
 *.d.ts
-*.swp
-node_modules/
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
