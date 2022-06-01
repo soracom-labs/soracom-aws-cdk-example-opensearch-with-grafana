@@ -1,9 +1,8 @@
 import { Stack, StackProps, aws_ec2, CfnOutput } from 'aws-cdk-lib';
-import { BastionHostLinuxProps } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { BastionHost, BastionHostProps } from './bastion';
-import { GrafanaCluster, GrafanaClusterProps } from './grafana';
-import { OpensearchCluster, OpensearchClusterProps } from './opensearch';
+import { BastionHost } from './bastion';
+import { GrafanaCluster } from './grafana';
+import { OpensearchCluster } from './opensearch';
 
 export interface OpensearchWithGrafanaStackProps extends StackProps {
   cloudfrontPrefixListId: string;
@@ -28,13 +27,16 @@ export class OpensearchWithGrafanaStack extends Stack {
       vpc,
       keyPairName: props.ec2KeyPairName,
     });
-    new CfnOutput(this, 'Checkpoint instance-id', {
+    new CfnOutput(this, 'Bastion host instance-id', {
       value: bastionHost.checkpointInstanceId,
     });
 
-    new OpensearchCluster(this, `${id}/Opensearch`, {
+    const opensearch = new OpensearchCluster(this, `${id}/Opensearch`, {
       vpc,
       peerSecurityGroups: [grafanaCluster.serviceSecurityGroup, bastionHost.bastionHostSecurityGroup],
+    });
+    new CfnOutput(this,'Lambda function ARN for SORACOM Funk', {
+      value: opensearch.lambdaFunctionArn
     });
   }
 }

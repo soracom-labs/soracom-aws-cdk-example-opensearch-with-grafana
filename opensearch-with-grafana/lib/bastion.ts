@@ -1,4 +1,4 @@
-import { aws_ec2, aws_iam, CfnOutput } from 'aws-cdk-lib';
+import { aws_ec2, aws_iam } from 'aws-cdk-lib';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 

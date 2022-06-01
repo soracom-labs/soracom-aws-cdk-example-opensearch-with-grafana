@@ -19,14 +19,14 @@ export class BasicDataRecord {
   }
 }
 
-function buildRecordsToIndex(indexName: string, records: BasicDataRecord[]): any[] {
+export function buildRecordsToIndex(indexName: string, records: BasicDataRecord[]): any[] {
   return records.flatMap((record) => [{ index: { _index: indexName } }, record]);
 }
 
 export const handler = async (event: any, context: any): Promise<any> => {
   const record = new BasicDataRecord(context.clientContext.custom, event);
 
-  const indexName = `SoracomFunk-${dayjs().format('YYYYMMDD')}`;
+  const indexName = `soracomfunk-${dayjs().format('YYYYMMDD')}`;
   const recordsToIndex = buildRecordsToIndex(indexName, [record]);
 
   //We use bulk api to future update.

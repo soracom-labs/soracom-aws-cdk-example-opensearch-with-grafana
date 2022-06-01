@@ -2,6 +2,7 @@ import { aws_ec2, aws_iam, aws_opensearchservice, CfnOutput, Duration } from 'aw
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { Lambda } from 'aws-cdk-lib/aws-ses-actions';
 import { Construct } from 'constructs';
 import { join } from 'path';
 
@@ -11,6 +12,9 @@ export interface OpensearchClusterProps {
 }
 
 export class OpensearchCluster extends Construct {
+
+  public readonly lambdaFunctionArn:string;
+
   constructor(scope: Construct, id: string, props: OpensearchClusterProps) {
     super(scope, id);
 
@@ -76,9 +80,13 @@ export class OpensearchCluster extends Construct {
       vpcSubnets: props.vpc.selectSubnets({ subnetType: aws_ec2.SubnetType.PRIVATE_WITH_NAT }),
     };
 
-    const funkFunction = new NodejsFunction(this, 'funkFunction', {
+    const lambda = new NodejsFunction(this, 'funkFunction', {
       entry: join(__dirname, '../lambdas', 'funk.ts'),
       ...nodeJsFunctionProps,
     });
+
+    this.lambdaFunctionArn = lambda.functionArn;
+
+
   }
 }

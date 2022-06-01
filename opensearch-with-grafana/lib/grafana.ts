@@ -77,7 +77,7 @@ export class GrafanaCluster extends Construct {
 
     //Grafana cluster
     const cluster = new aws_ecs.Cluster(this, 'Cluster', { vpc: props.vpc });
-    const image = aws_ecs.ContainerImage.fromRegistry('grafana/grafana-oss');
+    const image = aws_ecs.ContainerImage.fromRegistry('grafana/grafana-oss:7.5.10');
 
     const logging = new aws_ecs.AwsLogDriver({
       streamPrefix: 'grafana',
