@@ -5,6 +5,12 @@
     "opensearch-with-grafana": "bin/opensearch-with-grafana.js"
   },
   "scripts": {
+    "lint": "run-p -l -c --aggregate-output lint:*",
+    "lint:eslint": "eslint .",
+    "lint:prettier": "prettier --check .",
+    "fix": "run-s fix:prettier fix:eslint",
+    "fix:eslint": "npm run lint:eslint -- --fix",
+    "fix:prettier": "npm run lint:prettier -- --write",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
@@ -13,9 +19,13 @@
   "devDependencies": {
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
-    "jest": "^26.4.2",
-    "ts-jest": "^26.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
     "aws-cdk": "2.21.1",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "jest": "^26.4.2",
+    "prettier": "^2.6.2",
+    "ts-jest": "^26.2.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
