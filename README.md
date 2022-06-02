@@ -1,4 +1,4 @@
-# Opensearch with Grafana 
+# SORACOM IoT visualiztion example stack for OpenSearch with Grafana
 
 An example AWS CDK stack to visualize data from your IoT devices. Mainly consists of:
 - AWS Lambda function: an entry point for SORACOM Funk to ingest data.
@@ -43,7 +43,7 @@ For further part, we will refer as
 - ${OPENSEARCH_URL} = OpensearchWithGrafanaStack.OpensearchWithGrafanaStackOpensearchOpensearchUrl...
 - ${BASTION_HOST_INSTANCE_ID} = OpensearchWithGrafanaStack.Bastionhostinstanceid
 
-Now we have deployed Amazon OpenSearch Service, grafana on Amazon ECS Fargate and AWS Lambda for data ingestion.
+Now we have deployed Amazon OpenSearch Service, Grafana on Amazon ECS Fargate and AWS Lambda for data ingestion.
 
 ## 2. Configure SORACOM Funk
 
@@ -61,13 +61,13 @@ For detailed steps, please refer to [Configuration part](https://developers.sora
 [This Lambda function](./lambdas/funk.ts) expects incoming events in JSON formatted, so please be sure that your devices send telemetires in JSON.
 
 
-## 3. Configure grafana
+## 3. Configure Grafana
 
-To start using grafana, you have to configure data source so it refers to OpenSearch as:
+To start using Grafana, you have to configure data source so it refers to OpenSearch as:
 
-1. Configure grafana admin user
+1. Configure Grafana admin user
     - When you access to ${GRAFANA_URL}, you will be prompted to change initial password.
-1. Configure OpenSearch as grafana data source.
+1. Configure OpenSearch as Grafana data source.
     -  You have to configure data source to piont your OpenSearch cluster as navigating `Configuration` -> `Data sources` and click `Add data source`, then fill fields as below.
         - URL: `${OPENSEARCH_URL}`
         - Index Name: `[soracomfunk-]YYYYMMDD`
@@ -75,11 +75,11 @@ To start using grafana, you have to configure data source so it refers to OpenSe
         - Time field name: `serverTimestamp`
         - Elasticsearch Version: `7.0+`
 
-OK, now you can start using your grafana!
+OK, now you can start using your Grafana!
 
-## (Optional) Customizing grafana
+## (Optional) Customizing Grafana
 
-grafana is highly flexible and extensible software, you can configure it [via environment variables](https://grafana.com/docs/grafana/latest/administration/configuration/#override-configuration-with-environment-variables). You can update environment variables for grafana by editing [lib/grafana.ts](./lib/grafana.ts#86).
+Grafana is highly flexible and extensible software, you can configure it [via environment variables](https://grafana.com/docs/grafana/latest/administration/configuration/#override-configuration-with-environment-variables). You can update environment variables for Grafana by editing [lib/grafana.ts](./lib/grafana.ts#86).
 
 ## (Optional) Maintaining OpenSearch cluster
 
