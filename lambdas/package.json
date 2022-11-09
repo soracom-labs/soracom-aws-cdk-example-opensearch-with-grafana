@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^7.10.0",
+    "@elastic/elasticsearch": "^8.0.0",
     "@types/elasticsearch": "^5.0.40",
     "dayjs": "^1.11.1"
   }
